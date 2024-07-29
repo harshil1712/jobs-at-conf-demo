@@ -1,5 +1,5 @@
 {
-  "name": "jobs-at-conf",
+  "name": "jobs-at-conf-example",
   "private": true,
   "scripts": {
     "build": "turbo build",

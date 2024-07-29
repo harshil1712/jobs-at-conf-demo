@@ -1,81 +1,64 @@
-# Turborepo starter
+# Jobs At Conf
 
-This is an official starter Turborepo.
+[Jobs At Conf](https://hirejuniors.dev/jobsatconf) is a job lisiting website for jobs one comes across at in-person conferences.
 
-## Using this example
+This monorepo consists the simple version of the web app and the workers for the Jobs At Conf project.
 
-Run the following command:
+## Demo
+
+Check out the demo video:
+
+https://youtu.be/vjitMnmKKqA?si=eypGFyCtJUb-6_x8
+
+## Built With
+
+- [Next.js](https://nextjs.org/)
+- [Cloudflare R2](https://developers.cloudflare.com/r2/)
+- [Cloudflare D1](https://developers.cloudflare.com/d1/)
+- [Cloudflare Queues](https://developers.cloudflare.com/queues/)
+- [Workers AI](https://developers.cloudflare.com/workers-ai/)
+- [Cloudflare Pages](https://developers.cloudflare.com/pages/)
+
+## How does it work?
+
+1. User uploads an image of a job poster
+2. Once the image gets uploaded to an R2 bucket, an event notification is sent to a queue.
+3. The queue consumer worker calls the `api/ai` endpoint.
+4. This endpoint uses an AI model to extract information from the image, and store it in a D1 table.
+
+![Diagram](./diagram.png)
+
+## Getting Started
+
+### Prerequisites
+
+- A [Cloudflare account](https://dash.cloudflare.com/sign-up/workers-and-pages) with access to [R2](https://developers.cloudflare.com/r2/).
+- Install [Node.js](https://nodejs.org/en/) and [npm](https://docs.npmjs.com/getting-started).
+
+### Clone the repo
+
+Run the following command to clone the project
 
 ```sh
-npx create-turbo@latest
+$ git clone https://github.com/harshil1712/jobs-at-conf-demo.git
 ```
 
-## What's inside?
+### Install dependencies
 
-This Turborepo includes the following packages/apps:
+Execute the following command to install the dependencies
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```sh
+$ npm i
 ```
 
-### Develop
+### Start local development server
 
-To develop all apps and packages, run the following command:
+Start the local development servers with the following command
 
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+```sh
+$ npm run dev
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## Learn more
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+Check out the directoris of the [web app](./apps/web) and the [worker](./apps/worker) for more details.

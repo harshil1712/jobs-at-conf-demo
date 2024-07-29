@@ -1,99 +1,66 @@
-import Image from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+import { getRequestContext } from "@cloudflare/next-on-pages";
+import Link from "next/link";
 
-export default function Home() {
+export const runtime = "edge";
+
+async function fetchAllAudio() {
+  const res = await getRequestContext()
+    .env.DB.prepare("SELECT * FROM jobs ORDER BY id DESC")
+    .all();
+  if (res.success) {
+    return res.results;
+  }
+  return res;
+}
+
+export default async function ListAudio() {
+  const results = (await fetchAllAudio()) as any[];
+  if (results?.length === 0) {
+    return null;
+  }
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <main className="p-6 md:p-8 lg:p-10 min-h-screen">
+      <h1 className="text-2xl font-bold mb-1 dark:text-gray-200">
+        Jobs At Conf
+      </h1>
+      <p className="dark:text-gray-700 mb-4">
+        *the job role, description, company name, and the application link
+        (email) are generated via AI. Please check the image for the correct
+        details.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {results.map((job) => (
+          // @ts-ignore:
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <div
+            key={job.id}
+            className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4"
           >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file-text.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            <Link href={`/jobs/${job.file_key}`}>
+              <h3 className="text-lg font-medium dark:text-gray-200">
+                {job?.job_role}
+              </h3>
+              <h4 className="font-medium mb-2 dark:text-gray-500">
+                {job?.hiring_company}
+              </h4>
+              <div className="flex justify-center items-center">
+                <img
+                  src={`/api/download?filename=${job.file_key}`}
+                  className="h-32 rounded-md"
+                />
+              </div>
+              {/* <p className="text-justify dark:text-white">
+              {job?.job_description}
+            </p> */}
+              <p className="text-justify my-2 dark:text-white">
+                {job?.job_apply}
+              </p>
+
+              <p className="mt-4 dark:text-gray-500"> More details</p>
+            </Link>
+          </div>
+        ))}
+      </div>
+    </main>
   );
 }
